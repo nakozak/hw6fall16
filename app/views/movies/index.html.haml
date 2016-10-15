@@ -8,7 +8,7 @@
   - @all_ratings.each do |rating|
     = rating
     = check_box_tag "ratings[#{rating}]", 1, @selected_ratings.include?(rating), :id => "ratings_#{rating}"
-  = submit_tag 'Refresh', :id => 'ratings_submit'
+  = submit_tag 'Refresh', :id => 'ratings_submit', :style=> "background-color:wheat; color:maroon; font-weight:bold"
 
 %table#movies
   %thead
@@ -17,6 +17,8 @@
       %th Rating
       %th{:class => @date_header}= link_to 'Release Date', movies_path(:sort => 'release_date', :ratings => @selected_ratings), :id => 'release_date_header'
       %th More Info
+      
+      
   %tbody
     - @movies.each do |movie|
       %tr
@@ -24,5 +26,10 @@
         %td= movie.rating
         %td= movie.release_date
         %td= link_to "More about #{movie.title}", movie_path(movie)
-
+        
+%h4{:style => "color: maroon;"} Search for movie titles containing:
+= form_tag movies_search_tmdb_path, :method => :post, :id => 'search_form' do
+  = text_field_tag :search_terms, nil, :id => 'search_box'
+  = submit_tag 'Search TMDb', :id => 'search_button', :style=> "background-color:wheat; color:maroon; font-weight:bold"
+%br
 = link_to 'Add new movie', new_movie_path
