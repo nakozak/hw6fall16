@@ -9,8 +9,11 @@ class Movie::InvalidKeyError < StandardError ; end
     begin
       movies = []
       #Add movies to array
-      Tmdb::Movie.find(string).each do |movie|
-      movies << {:tmdb_id => movie.id, :title => movie.title, :rating => self.get_rating(movie.id), :release_date => movie.release_date}
+      tmdb_movies = Tmdb::Movie.find(string)
+      if !tmdb_movies.nil? && !tmdb_movies.empty?
+      tmdb_movies.each do |movie|
+      movies << {:tmdb_id => movie.id, :title => movie.title , :rating => self.get_rating_from_tmdb(movie.id), :release_date => movie.release_date}
+        end
       end
       return movies
     rescue Tmdb::InvalidApiKeyError
@@ -20,13 +23,13 @@ class Movie::InvalidKeyError < StandardError ; end
   #Create Movie found in TMDb
   def self.create_from_tmdb(tmdb_id)
     detail = Tmdb::Movie.detail(tmdb_id)
-    Movie.create(title: detail["original_title"], rating: self.get_rating(tmdb_id), release_date: detail["release_date"])
+    Movie.create(title: detail["original_title"], rating: self.get_rating_from_tmdb(tmdb_id), release_date: detail["release_date"])
   end
   #Get the ratings from TMDb 
-  def self.get_rating(tmdb_id)
+  def self.get_rating_from_tmdb(tmdb_id)
     tmdb_rating = ""
     Tmdb::Movie.releases(tmdb_id)["countries"].each do |rating|
-      if rating["iso_3166_1"] == "US"
+      if rating["iso_3166_1"] == "US" && rating["certification"] !=''
         tmdb_rating = rating["certification"]
         break
       end

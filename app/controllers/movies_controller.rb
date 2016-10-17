@@ -63,7 +63,7 @@ class MoviesController < ApplicationController
   #Add a movie to the TMDb
   def add_tmdb
     if params[:tmdb_movies]
-      params[:tmdb_movies].keys.each {|movie| puts Movie.create_from_tmdb(movie)}
+      params[:tmdb_movies].keys.each {|movie| Movie.create_from_tmdb(movie)}
       flash[:notice] = "Movies successfully added to Rotten Potatoes"
     else
       flash[:notice] = "No movies selected"
@@ -73,14 +73,15 @@ class MoviesController < ApplicationController
   #Search TMDb, Checks if the search term is empty
   def search_tmdb
     @search_terms = params[:search_terms]
+    puts @search_terms
     if @search_terms.empty? || @search_terms.nil?
-      flash[:warning] ="Invalid Search. Please try again"
+      flash[:warning] ="Invalid search. Please try again"
       redirect_to movies_path
     else
       @movies=Movie.find_in_tmdb(@search_terms)
       #Used to debug movie search from tmdb
       #puts @movies
-      if @movies.empty?
+      if @movies.nil?|| @movies.empty? 
         flash[:notice] = "No matching movies were found on TMDb"
         redirect_to movies_path
       end
