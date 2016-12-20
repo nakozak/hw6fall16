@@ -61,7 +61,7 @@ class MoviesController < ApplicationController
     redirect_to movies_path
   end
   #Add a movie to the TMDb
-  def to_add
+  def add_tmdb
     if params[:tmdb_movies]
       params[:tmdb_movies].keys.each {|movie| Movie.create_from_tmdb(movie)}
       flash[:notice] = "Movies successfully added to Rotten Potatoes"
